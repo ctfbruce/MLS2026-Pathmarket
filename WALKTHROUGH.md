@@ -99,7 +99,7 @@ The aggregator is a single FastAPI app in [src/pathmarket/aggregator/app.py](src
 
 ### 4.1 `POST /sla` — 9-step verification chain
 
-[validation.py:73-241](src/pathmarket/aggregator/validation.py#L73-L241). Short-circuits on the first failing step; the response body is the **full step-by-step report** (a list of `{step, ok, detail}` records). The backend and UI action wrapper for upload exist, but the current visible UI does not include the full Submit SLA checklist view described in the original design.
+[validation.py:73-241](src/pathmarket/aggregator/validation.py#L73-L241). Short-circuits on the first failing step; the response body is the **full step-by-step report** (a list of `{step, ok, detail}` records). The backend and UI action wrapper for upload exist, but the current visible UI does not include a full Submit SLA checklist view.
 
 | # | Step | What it checks |
 | --- | --- | --- |
@@ -238,7 +238,7 @@ Determinism is end-to-end seeded ([orchestrator.py:117](src/pathmarket/simulator
 
 ### 6.6 Cold-start replay
 
-[simulator/recorder.py](src/pathmarket/simulator/recorder.py) runs the orchestrator as fast as the host allows and JSONL-streams each artifact to disk. The committed [assets/cold_start.jsonl](assets/cold_start.jsonl) is ~4.3 MB with 6,252 artifacts (638 SLAs, 4,700 claims, 914 complaints) spanning `2026-04-19T12:00:01Z` to `2026-04-19T12:40:47Z`. The UI replay ([ui-export/cold_start.jsx](ui-export/cold_start.jsx)) compresses that ~40-minute artifact to ~30s — the "empty market → stratified market" opener for the pitch.
+[simulator/recorder.py](src/pathmarket/simulator/recorder.py) runs the orchestrator as fast as the host allows and JSONL-streams each artifact to disk. The bundled [assets/cold_start.jsonl](assets/cold_start.jsonl) is ~4.3 MB with 6,252 artifacts (638 SLAs, 4,700 claims, 914 complaints) spanning `2026-04-19T12:00:01Z` to `2026-04-19T12:40:47Z`. The UI replay ([ui-export/cold_start.jsx](ui-export/cold_start.jsx)) compresses that ~40-minute artifact to ~30s — the "empty market → stratified market" opener for the pitch.
 
 ---
 
@@ -306,7 +306,7 @@ The static path table mirrors a real `scion showpaths` output, so switching betw
 
 ### 8.2 Topology
 
-The demo runs on SCION's stock 16-AS [`default.topo`](https://github.com/scionproto/scion/blob/master/topology/default.topo). PathMarket's AS IDs are remapped to fit it (commit `f424b9e`, "phase-E1: remap ASes to match SCION default topology").
+The demo runs on SCION's stock 16-AS [`default.topo`](https://github.com/scionproto/scion/blob/master/topology/default.topo). PathMarket's AS IDs were chosen to match the AS IDs that topology generates.
 
 ### 8.3 Active AS set
 
