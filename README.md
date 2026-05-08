@@ -8,7 +8,7 @@ are violated, and watch reputation rise or fall based on k-corroborated
 complaints.
 
 <p align="center">
-  <img src="ui-export/screenshots/02-wider.png" alt="PathMarket operator terminal" width="900">
+  <img src="ui-export/screenshots/hi-res-main-page.png" alt="PathMarket operator terminal" width="900">
 </p>
 
 > For the implementation-level tour — schemas, validation chains, scorer
