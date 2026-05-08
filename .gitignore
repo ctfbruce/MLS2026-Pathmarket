@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+
+# Virtualenv
+.venv/
+venv/
+
+# Local configuration and generated key material
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.private
+keys/
+keyring.json
+runtime/
+
+# Editor / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Local ephemeral
+*.log
+*.tmp
+
+# Local development notes / handoff material
+DESIGN.md
+CLAUDE_CODE_BOOTSTRAP.md
+.claude/
+.codex/
+.codex
+ui-export/UI_PROMPT_*.md

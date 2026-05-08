@@ -1,0 +1,13 @@
+paths:
+  "1-ff00:0:112 -> 1-ff00:0:130":
+    - [{"isd_as": "1-ff00:0:112", "ingress": 0, "egress": 495},
+       {"isd_as": "1-ff00:0:111", "ingress": 113, "egress": 104},
+       {"isd_as": "1-ff00:0:130", "ingress": 2, "egress": 0}]
+    - [{"isd_as": "1-ff00:0:112", "ingress": 0, "egress": 494},
+       {"isd_as": "1-ff00:0:122", "ingress": 105, "egress": 112},
+       {"isd_as": "1-ff00:0:130", "ingress": 3, "egress": 0}]
+  "1-ff00:0:112 -> 2-ff00:0:301":
+    - [{"isd_as": "1-ff00:0:112", "ingress": 0, "egress": 495},
+       {"isd_as": "1-ff00:0:100", "ingress": 9, "egress": 1},
+       {"isd_as": "2-ff00:0:100", "ingress": 1, "egress": 4},
+       {"isd_as": "2-ff00:0:301", "ingress": 2, "egress": 0}]

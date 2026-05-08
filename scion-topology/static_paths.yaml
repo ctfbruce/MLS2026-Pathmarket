@@ -1,0 +1,71 @@
+# PathMarket v2 static path table (§A.5 fallback when SCION isn't available).
+# Top-level `paths:` map is required. Keys: "src_isd_as -> dst_isd_as".
+# Values: list of path candidates, each a list of PathHop-like dicts.
+#
+# The static paths below are the SCION default topology's actual hops, so
+# switching `--path-discovery static ↔ scion` produces the same candidate
+# set. The sequence ingress/egress IDs come straight from
+# `scion showpaths --format json` on a running default topology.
+
+paths:
+  "1-ff00:0:112 -> 1-ff00:0:130":
+    # Direct 2-hop path via 112#495 -> 130#113.
+    - - isd_as: "1-ff00:0:112"
+        ingress: 0
+        egress: 495
+      - isd_as: "1-ff00:0:130"
+        ingress: 113
+        egress: 0
+    # Longer 4-hop path via 111 and 120.
+    - - isd_as: "1-ff00:0:112"
+        ingress: 0
+        egress: 494
+      - isd_as: "1-ff00:0:111"
+        ingress: 103
+        egress: 104
+      - isd_as: "1-ff00:0:120"
+        ingress: 5
+        egress: 1
+      - isd_as: "1-ff00:0:130"
+        ingress: 105
+        egress: 0
+
+  "1-ff00:0:112 -> 1-ff00:0:133":
+    # Main path: 112 -> 130 -> 131 -> 132 -> 133.
+    - - isd_as: "1-ff00:0:112"
+        ingress: 0
+        egress: 495
+      - isd_as: "1-ff00:0:130"
+        ingress: 113
+        egress: 111
+      - isd_as: "1-ff00:0:131"
+        ingress: 479
+        egress: 478
+      - isd_as: "1-ff00:0:132"
+        ingress: 2
+        egress: 1
+      - isd_as: "1-ff00:0:133"
+        ingress: 2
+        egress: 0
+    # Longer path via 111 and 120.
+    - - isd_as: "1-ff00:0:112"
+        ingress: 0
+        egress: 494
+      - isd_as: "1-ff00:0:111"
+        ingress: 103
+        egress: 104
+      - isd_as: "1-ff00:0:120"
+        ingress: 5
+        egress: 1
+      - isd_as: "1-ff00:0:130"
+        ingress: 105
+        egress: 111
+      - isd_as: "1-ff00:0:131"
+        ingress: 479
+        egress: 478
+      - isd_as: "1-ff00:0:132"
+        ingress: 2
+        egress: 1
+      - isd_as: "1-ff00:0:133"
+        ingress: 2
+        egress: 0

@@ -1,0 +1,32 @@
+[server]
+bind_host = "0.0.0.0"
+bind_port = 8090
+
+[aggregator]
+url = "http://127.0.0.1:8080"
+
+[user_as]
+isd_as = "1-ff00:0:112"
+display_name = "Zurich-Financial-Edge"
+state_file = "runtime/user_as_state.json"
+tick_interval_seconds = 5.0
+path_discovery = "static"
+
+[user_as.default_policy]
+max_price_per_gb = "0.08"
+min_reputation_floor = 0.80
+alpha = 1.5
+beta = 5.0
+uncovered_tolerance = "partial_ok"
+complaint_sensitivity = "moderate"
+reshop_on_reputation_drop = 0.15
+portfolio_redundancy = 1
+
+[user_as.default_policy.required_bounds]
+latency_max_ms = 20
+loss_max_ppm = 500
+bandwidth_min_kbps = 4_000_000
+
+[ui]
+serve_from = "ui-export/"
+cold_start_file = "assets/cold_start.jsonl"

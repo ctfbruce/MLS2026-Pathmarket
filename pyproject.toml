@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pathmarket"
+version = "2.0.0"
+description = "PathMarket v2 — market-and-reputation terminal for SCION transit"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.27",
+    "pydantic>=2.6",
+    "httpx>=0.27",
+    "cryptography>=42",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "ruff>=0.3",
+    "mypy>=1.9",
+]
+
+[project.scripts]
+pathmarket-aggregator = "pathmarket.aggregator.app:main"
+pathmarket-simulator = "pathmarket.simulator.main:main"
+pathmarket-user-agent = "pathmarket.user_agent.main:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+markers = [
+    "end_to_end: subprocess-driven end-to-end tests (slow)",
+    "requires_scion: requires a running SCION topology; self-skips otherwise",
+]
+testpaths = ["tests"]
+# strict-markers enforced per §14
+addopts = "--strict-markers"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true

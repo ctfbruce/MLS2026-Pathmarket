@@ -1,0 +1,22 @@
+[server]
+bind_host = "0.0.0.0"
+bind_port = 8080
+
+[paths]
+keyring_file = "keyring.json"
+
+[scoring]
+k = 3
+window_minutes = 5
+violation_weight = 0.1
+# Per-violation penalty decays as exp(-Δt/tau). With tau=0.1h (~6 min)
+# an AS that stops attracting complaints visibly recovers within a demo:
+# a single 0.1 penalty halves every ~4 min. For production §6.3 recommends
+# tau ≈ 100h; the short value here is a demo-timescale override.
+decay_time_constant_hours = 0.025
+
+[ticker]
+max_events = 500
+
+[admin]
+enable_admin_endpoints = true

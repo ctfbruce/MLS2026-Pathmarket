@@ -1,0 +1,599 @@
+[server]
+bind_host = "0.0.0.0"
+bind_port = 8081
+
+[aggregator]
+url = "http://127.0.0.1:8080"
+
+[simulation]
+tick_interval_seconds = 3.0
+initial_sla_count = 10
+path_discovery = "static"
+
+# ----------------------------- ASes ---------------------------------------
+# Six transit ASes that cover the two static paths defined in
+# scion-topology/static_paths.yaml: 112→120→130 and 112→121→140.
+# Two edge buyers keep the claim feed busy.
+
+[[generic_ases]]
+isd_as = "1-ff00:0:111"
+role = "transit-good"
+quality_profile = "transit-good"
+[generic_ases.policy]
+max_price_per_gb = "1.00"
+min_reputation_floor = 0.0
+alpha = 1.0
+beta = 1.0
+uncovered_tolerance = "anywhere"
+complaint_sensitivity = "moderate"
+reshop_on_reputation_drop = 1.0
+portfolio_redundancy = 0
+
+[[generic_ases]]
+isd_as = "1-ff00:0:120"
+role = "transit-good"
+quality_profile = "transit-good"
+[generic_ases.policy]
+max_price_per_gb = "1.00"
+min_reputation_floor = 0.0
+alpha = 1.0
+beta = 1.0
+uncovered_tolerance = "anywhere"
+complaint_sensitivity = "moderate"
+reshop_on_reputation_drop = 1.0
+portfolio_redundancy = 0
+
+[[generic_ases]]
+isd_as = "1-ff00:0:121"
+role = "transit-good"
+quality_profile = "transit-good"
+[generic_ases.policy]
+max_price_per_gb = "1.00"
+min_reputation_floor = 0.0
+alpha = 1.0
+beta = 1.0
+uncovered_tolerance = "anywhere"
+complaint_sensitivity = "moderate"
+reshop_on_reputation_drop = 1.0
+portfolio_redundancy = 0
+
+[[generic_ases]]
+isd_as = "1-ff00:0:122"
+role = "transit-premium"
+quality_profile = "transit-premium"
+[generic_ases.policy]
+max_price_per_gb = "1.00"
+min_reputation_floor = 0.0
+alpha = 1.0
+beta = 1.0
+uncovered_tolerance = "anywhere"
+complaint_sensitivity = "moderate"
+reshop_on_reputation_drop = 1.0
+portfolio_redundancy = 0
+
+[[generic_ases]]
+isd_as = "1-ff00:0:130"
+role = "transit-good"
+quality_profile = "transit-good"
+[generic_ases.policy]
+max_price_per_gb = "1.00"
+min_reputation_floor = 0.0
+alpha = 1.0
+beta = 1.0
+uncovered_tolerance = "anywhere"
+complaint_sensitivity = "moderate"
+reshop_on_reputation_drop = 1.0
+portfolio_redundancy = 0
+
+[[generic_ases]]
+isd_as = "1-ff00:0:133"
+role = "transit-good"
+quality_profile = "transit-good"
+[generic_ases.policy]
+max_price_per_gb = "1.00"
+min_reputation_floor = 0.0
+alpha = 1.0
+beta = 1.0
+uncovered_tolerance = "anywhere"
+complaint_sensitivity = "moderate"
+reshop_on_reputation_drop = 1.0
+portfolio_redundancy = 0
+
+[[generic_ases]]
+isd_as = "2-ff00:0:220"
+role = "transit-bad"
+quality_profile = "transit-bad"
+[generic_ases.policy]
+max_price_per_gb = "1.00"
+min_reputation_floor = 0.0
+alpha = 1.0
+beta = 1.0
+uncovered_tolerance = "anywhere"
+complaint_sensitivity = "moderate"
+reshop_on_reputation_drop = 1.0
+portfolio_redundancy = 0
+
+[[generic_ases]]
+isd_as = "1-ff00:0:132"
+role = "edge-buyer"
+[generic_ases.policy]
+max_price_per_gb = "0.15"
+min_reputation_floor = 0.70
+alpha = 1.5
+beta = 5.0
+uncovered_tolerance = "partial_ok"
+complaint_sensitivity = "moderate"
+reshop_on_reputation_drop = 0.15
+portfolio_redundancy = 1
+[generic_ases.policy.required_bounds]
+latency_max_ms = 25
+loss_max_ppm = 600
+bandwidth_min_kbps = 2_000_000
+
+[[generic_ases]]
+isd_as = "2-ff00:0:210"
+role = "edge-buyer"
+[generic_ases.policy]
+max_price_per_gb = "0.10"
+min_reputation_floor = 0.75
+alpha = 1.0
+beta = 3.0
+uncovered_tolerance = "partial_ok"
+complaint_sensitivity = "moderate"
+reshop_on_reputation_drop = 0.15
+portfolio_redundancy = 1
+[generic_ases.policy.required_bounds]
+latency_max_ms = 20
+loss_max_ppm = 500
+bandwidth_min_kbps = 4_000_000
+
+# Extra buyers — §6.1 k-corroboration needs at least k=3 distinct complainants
+# on the same (sla, metric) within the window. With four buyers plus the two
+# above, the transit-bad SLAs reliably trigger reputation decay in view of the
+# demo.
+
+[[generic_ases]]
+isd_as = "2-ff00:0:211"
+role = "edge-buyer"
+[generic_ases.policy]
+max_price_per_gb = "0.12"
+min_reputation_floor = 0.70
+alpha = 1.5
+beta = 5.0
+uncovered_tolerance = "partial_ok"
+complaint_sensitivity = "strict"
+reshop_on_reputation_drop = 0.15
+portfolio_redundancy = 1
+[generic_ases.policy.required_bounds]
+latency_max_ms = 20
+loss_max_ppm = 450
+bandwidth_min_kbps = 3_500_000
+
+[[generic_ases]]
+isd_as = "2-ff00:0:221"
+role = "edge-buyer"
+[generic_ases.policy]
+max_price_per_gb = "0.10"
+min_reputation_floor = 0.70
+alpha = 1.0
+beta = 4.0
+uncovered_tolerance = "partial_ok"
+complaint_sensitivity = "moderate"
+reshop_on_reputation_drop = 0.15
+portfolio_redundancy = 1
+[generic_ases.policy.required_bounds]
+latency_max_ms = 22
+loss_max_ppm = 500
+bandwidth_min_kbps = 3_000_000
+
+# Cosigner-only participants never buy SLAs (their policy below rejects
+# everything via min_reputation_floor=1.0). 131 is a transit on the Helsinki
+# trunk. 112 is the user's own AS — the simulator signs as 112 when a template
+# places 112 at the *source* position; the relaxed self-dealing rule
+# (aggregator/validation.py Step 5) lets the user's 112 user-agent claim
+# SLAs where 112 is the first cosigner.
+
+[[generic_ases]]
+isd_as = "1-ff00:0:131"
+role = "cosigner-only"
+quality_profile = "transit-good"
+[generic_ases.policy]
+max_price_per_gb = "0.00"
+min_reputation_floor = 1.0
+alpha = 1.0
+beta = 1.0
+uncovered_tolerance = "anywhere"
+complaint_sensitivity = "moderate"
+reshop_on_reputation_drop = 1.0
+portfolio_redundancy = 0
+
+[[generic_ases]]
+isd_as = "1-ff00:0:112"
+role = "cosigner-only"
+quality_profile = "transit-good"
+[generic_ases.policy]
+max_price_per_gb = "0.00"
+min_reputation_floor = 1.0
+alpha = 1.0
+beta = 1.0
+uncovered_tolerance = "anywhere"
+complaint_sensitivity = "moderate"
+reshop_on_reputation_drop = 1.0
+portfolio_redundancy = 0
+
+# ----------------------------- SLA templates ------------------------------
+# Segments cover transit-only portions of the user's default paths.
+
+# Path to 1-ff00:0:130: 112 → 120 → 130. SLA covers [120, 130].
+[[sla_templates]]
+price_per_gb = "0.045"
+consortium_profile = "transit-good"
+validity_hours = 24
+[[sla_templates.path]]
+isd_as = "1-ff00:0:120"
+ingress = 0
+egress = 102
+[[sla_templates.path]]
+isd_as = "1-ff00:0:130"
+ingress = 202
+egress = 0
+[sla_templates.bounds]
+latency_max_ms = 11
+loss_max_ppm = 300
+bandwidth_min_kbps = 6_000_000
+
+# Same segment, premium variant (higher price, tighter bounds).
+[[sla_templates]]
+price_per_gb = "0.075"
+consortium_profile = "transit-premium"
+validity_hours = 24
+[[sla_templates.path]]
+isd_as = "1-ff00:0:120"
+ingress = 0
+egress = 102
+[[sla_templates.path]]
+isd_as = "1-ff00:0:130"
+ingress = 202
+egress = 0
+[sla_templates.bounds]
+latency_max_ms = 6
+loss_max_ppm = 100
+bandwidth_min_kbps = 10_000_000
+
+# Path to 1-ff00:0:133: 112 → 121 → 140. SLA covers [121, 140].
+[[sla_templates]]
+price_per_gb = "0.040"
+consortium_profile = "transit-good"
+validity_hours = 24
+[[sla_templates.path]]
+isd_as = "1-ff00:0:121"
+ingress = 0
+egress = 104
+[[sla_templates.path]]
+isd_as = "1-ff00:0:133"
+ingress = 204
+egress = 0
+[sla_templates.bounds]
+latency_max_ms = 10
+loss_max_ppm = 250
+bandwidth_min_kbps = 5_500_000
+
+# A three-AS "transit-bad" consortium so the simulator produces complaints
+# and reputation drops organically.
+[[sla_templates]]
+price_per_gb = "0.030"
+consortium_profile = "transit-bad"
+validity_hours = 12
+[[sla_templates.path]]
+isd_as = "1-ff00:0:120"
+ingress = 0
+egress = 301
+[[sla_templates.path]]
+isd_as = "2-ff00:0:220"
+ingress = 301
+egress = 302
+[[sla_templates.path]]
+isd_as = "1-ff00:0:130"
+ingress = 302
+egress = 0
+[sla_templates.bounds]
+latency_max_ms = 18
+loss_max_ppm = 400
+bandwidth_min_kbps = 5_000_000
+
+# Path to 130 via DE-CIX (122) — composable with the [120,130] SLA.
+[[sla_templates]]
+price_per_gb = "0.025"
+consortium_profile = "transit-good"
+validity_hours = 24
+[[sla_templates.path]]
+isd_as = "1-ff00:0:122"
+ingress = 0
+egress = 205
+[[sla_templates.path]]
+isd_as = "1-ff00:0:120"
+ingress = 205
+egress = 0
+[sla_templates.bounds]
+latency_max_ms = 7
+loss_max_ppm = 150
+bandwidth_min_kbps = 8_000_000
+
+# Additional transit-bad consortia so reputation decay doesn't always
+# land on the same three ASes. Each one is a different cosigner set
+# over an alternate path; the quality model still samples violations,
+# so complaints accumulate on whichever bad template happens to be
+# picked by the publish loop.
+
+# Alternate bad path: 121 → 220 → 140 (west-side transit with 220 again).
+[[sla_templates]]
+price_per_gb = "0.032"
+consortium_profile = "transit-bad"
+validity_hours = 12
+[[sla_templates.path]]
+isd_as = "1-ff00:0:121"
+ingress = 0
+egress = 303
+[[sla_templates.path]]
+isd_as = "2-ff00:0:220"
+ingress = 303
+egress = 304
+[[sla_templates.path]]
+isd_as = "1-ff00:0:133"
+ingress = 304
+egress = 0
+[sla_templates.bounds]
+latency_max_ms = 18
+loss_max_ppm = 400
+bandwidth_min_kbps = 5_000_000
+
+# Bad pair: 122 → 121 — rotates blame onto a different two-AS consortium.
+[[sla_templates]]
+price_per_gb = "0.028"
+consortium_profile = "transit-bad"
+validity_hours = 12
+[[sla_templates.path]]
+isd_as = "1-ff00:0:122"
+ingress = 0
+egress = 306
+[[sla_templates.path]]
+isd_as = "1-ff00:0:121"
+ingress = 306
+egress = 0
+[sla_templates.bounds]
+latency_max_ms = 16
+loss_max_ppm = 380
+bandwidth_min_kbps = 5_000_000
+
+# Bad three-AS consortium using 111 as ingress transit: 111 → 121 → 140.
+[[sla_templates]]
+price_per_gb = "0.031"
+consortium_profile = "transit-bad"
+validity_hours = 12
+[[sla_templates.path]]
+isd_as = "1-ff00:0:111"
+ingress = 0
+egress = 307
+[[sla_templates.path]]
+isd_as = "1-ff00:0:121"
+ingress = 307
+egress = 308
+[[sla_templates.path]]
+isd_as = "1-ff00:0:133"
+ingress = 308
+egress = 0
+[sla_templates.bounds]
+latency_max_ms = 18
+loss_max_ppm = 400
+bandwidth_min_kbps = 5_000_000
+
+# --------------------------------------------------------------------------
+# v2.1 additions — templates that actually cover the user's default paths.
+# The coverage matcher slides cosigner sequences over path AS sequences, so
+# the templates below are authored to match real windows of the two paths:
+#
+#   112 -> 130           (Path A, direct)
+#   112 -> 111 -> 120 -> 130   (Path B, long)
+#   112 -> 130 -> 131 -> 132 -> 133  (Path A' to Helsinki)
+#   112 -> 111 -> 120 -> 130 -> 131 -> 132 -> 133  (Path B' to Helsinki)
+# --------------------------------------------------------------------------
+
+# Path A direct cover: [112, 130]. 112 is the source (first cosigner), so
+# self-dealing allows the user's 112 agent to claim this SLA; the simulator
+# signs as 112 because the user's key is available to it. Premium variant
+# (transit-premium quality, tighter bounds) — matches §7.4.
+[[sla_templates]]
+price_per_gb = "0.065"
+consortium_profile = "transit-premium"
+validity_hours = 24
+[[sla_templates.path]]
+isd_as = "1-ff00:0:112"
+ingress = 0
+egress = 101
+[[sla_templates.path]]
+isd_as = "1-ff00:0:130"
+ingress = 201
+egress = 0
+[sla_templates.bounds]
+latency_max_ms = 5
+loss_max_ppm = 90
+bandwidth_min_kbps = 11_000_000
+
+# Full cover for the long Path B: [112, 111, 120, 130]. 112 is the source
+# (first cosigner), so self-dealing allows the user's 112 agent to claim.
+[[sla_templates]]
+price_per_gb = "0.070"
+consortium_profile = "transit-good"
+validity_hours = 24
+[[sla_templates.path]]
+isd_as = "1-ff00:0:112"
+ingress = 0
+egress = 103
+[[sla_templates.path]]
+isd_as = "1-ff00:0:111"
+ingress = 103
+egress = 104
+[[sla_templates.path]]
+isd_as = "1-ff00:0:120"
+ingress = 5
+egress = 1
+[[sla_templates.path]]
+isd_as = "1-ff00:0:130"
+ingress = 105
+egress = 0
+[sla_templates.bounds]
+latency_max_ms = 14
+loss_max_ppm = 240
+bandwidth_min_kbps = 6_000_000
+
+# Partial cover for Path B: [111, 120, 130]. Matches the three transit
+# ASes after 112. Under strict coverage, this covers hops 1..3 of Path B
+# (edges 111→120, 120→130), leaving the source edge 112→111 uncovered.
+[[sla_templates]]
+price_per_gb = "0.055"
+consortium_profile = "transit-good"
+validity_hours = 24
+[[sla_templates.path]]
+isd_as = "1-ff00:0:111"
+ingress = 103
+egress = 104
+[[sla_templates.path]]
+isd_as = "1-ff00:0:120"
+ingress = 5
+egress = 1
+[[sla_templates.path]]
+isd_as = "1-ff00:0:130"
+ingress = 105
+egress = 0
+[sla_templates.bounds]
+latency_max_ms = 13
+loss_max_ppm = 220
+bandwidth_min_kbps = 6_500_000
+
+# Composable west-side pair [111, 120] — combines with the existing [120,130]
+# template to form partial 2-hop coverage of the long Path B.
+[[sla_templates]]
+price_per_gb = "0.028"
+consortium_profile = "transit-good"
+validity_hours = 24
+[[sla_templates.path]]
+isd_as = "1-ff00:0:111"
+ingress = 103
+egress = 104
+[[sla_templates.path]]
+isd_as = "1-ff00:0:120"
+ingress = 5
+egress = 1
+[sla_templates.bounds]
+latency_max_ms = 8
+loss_max_ppm = 200
+bandwidth_min_kbps = 7_000_000
+
+# Nordic trunk: 130 -> 131 -> 132 -> 133, the Telia→Stockholm→Oslo→Helsinki
+# consortium. Covers the transit portion of both Helsinki paths.
+[[sla_templates]]
+price_per_gb = "0.050"
+consortium_profile = "transit-good"
+validity_hours = 24
+[[sla_templates.path]]
+isd_as = "1-ff00:0:130"
+ingress = 113
+egress = 111
+[[sla_templates.path]]
+isd_as = "1-ff00:0:131"
+ingress = 479
+egress = 478
+[[sla_templates.path]]
+isd_as = "1-ff00:0:132"
+ingress = 2
+egress = 1
+[[sla_templates.path]]
+isd_as = "1-ff00:0:133"
+ingress = 2
+egress = 0
+[sla_templates.bounds]
+latency_max_ms = 14
+loss_max_ppm = 280
+bandwidth_min_kbps = 5_500_000
+
+# Same nordic trunk, transit-bad consortium. Same path, different signers
+# (well — same signers, just flipped to bad quality model). Gives the
+# "Network trouble on AS 132" scenario something to bite on for the
+# Helsinki destination demo, not just Path B.
+[[sla_templates]]
+price_per_gb = "0.032"
+consortium_profile = "transit-bad"
+validity_hours = 12
+[[sla_templates.path]]
+isd_as = "1-ff00:0:130"
+ingress = 113
+egress = 111
+[[sla_templates.path]]
+isd_as = "1-ff00:0:131"
+ingress = 479
+egress = 478
+[[sla_templates.path]]
+isd_as = "1-ff00:0:132"
+ingress = 2
+egress = 1
+[[sla_templates.path]]
+isd_as = "1-ff00:0:133"
+ingress = 2
+egress = 0
+[sla_templates.bounds]
+latency_max_ms = 18
+loss_max_ppm = 400
+bandwidth_min_kbps = 5_000_000
+
+# Composable nordic pairs — let the user compose trunk coverage out of
+# separate SLAs instead of one monolithic 4-AS cover.
+[[sla_templates]]
+price_per_gb = "0.022"
+consortium_profile = "transit-good"
+validity_hours = 24
+[[sla_templates.path]]
+isd_as = "1-ff00:0:130"
+ingress = 113
+egress = 111
+[[sla_templates.path]]
+isd_as = "1-ff00:0:131"
+ingress = 479
+egress = 478
+[sla_templates.bounds]
+latency_max_ms = 7
+loss_max_ppm = 160
+bandwidth_min_kbps = 7_500_000
+
+[[sla_templates]]
+price_per_gb = "0.020"
+consortium_profile = "transit-good"
+validity_hours = 24
+[[sla_templates.path]]
+isd_as = "1-ff00:0:131"
+ingress = 479
+egress = 478
+[[sla_templates.path]]
+isd_as = "1-ff00:0:132"
+ingress = 2
+egress = 1
+[sla_templates.bounds]
+latency_max_ms = 6
+loss_max_ppm = 140
+bandwidth_min_kbps = 8_000_000
+
+[[sla_templates]]
+price_per_gb = "0.020"
+consortium_profile = "transit-good"
+validity_hours = 24
+[[sla_templates.path]]
+isd_as = "1-ff00:0:132"
+ingress = 2
+egress = 1
+[[sla_templates.path]]
+isd_as = "1-ff00:0:133"
+ingress = 2
+egress = 0
+[sla_templates.bounds]
+latency_max_ms = 6
+loss_max_ppm = 140
+bandwidth_min_kbps = 8_000_000
