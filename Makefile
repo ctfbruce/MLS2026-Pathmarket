@@ -3,7 +3,7 @@
 	demo-aggregator demo-simulator demo-user-agent \
 	demo-scion-aggregator demo-scion-simulator demo-scion-user-agent
 
-SCION_ROOT ?= /home/kali/code/scion
+SCION_ROOT ?= $(HOME)/code/scion
 
 help:
 	@echo "PathMarket v2 targets:"
